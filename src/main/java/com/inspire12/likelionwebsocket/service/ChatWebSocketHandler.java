@@ -2,6 +2,7 @@ package com.inspire12.likelionwebsocket.service;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inspire12.likelionwebsocket.holder.WebSocketSessionHolder;
 import com.inspire12.likelionwebsocket.model.ChatMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
-    // 연결된 모든 세션을 저장할 스레드 안전한 Set
-    @Getter
-    private final Set<WebSocketSession> sessions = new CopyOnWriteArraySet<>();
     private final ObjectMapper objectMapper;
 
     public ChatWebSocketHandler(ObjectMapper objectMapper) {
@@ -30,7 +28,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        sessions.add(session);
+        WebSocketSessionHolder.sessions.add(session);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             messageToSend = new TextMessage(objectMapper.writeValueAsBytes(welcomeMessage));
         }
 
-        for (WebSocketSession webSocketSession : sessions) {
+        for (WebSocketSession webSocketSession : WebSocketSessionHolder.sessions) {
             if (webSocketSession.isOpen()) {
                 webSocketSession.sendMessage(messageToSend);
             }
@@ -52,7 +50,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session);
+        WebSocketSessionHolder.sessions.remove(session);
     }
 }
 

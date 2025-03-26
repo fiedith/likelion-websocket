@@ -2,6 +2,7 @@ package com.inspire12.likelionwebsocket.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inspire12.likelionwebsocket.holder.WebSocketSessionHolder;
 import com.inspire12.likelionwebsocket.model.ChatMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -25,7 +26,7 @@ public class MessageService {
 
         try {
             TextMessage messageToSend = new TextMessage(objectMapper.writeValueAsBytes(chatMessage));
-            Set<WebSocketSession> sessions = chatWebSocketHandler.getSessions();
+            Set<WebSocketSession> sessions = WebSocketSessionHolder.sessions;
             for (WebSocketSession session : sessions) {
                 if (session.isOpen()) {
                     session.sendMessage(messageToSend);
