@@ -28,7 +28,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        WebSocketSessionHolder.sessions.add(session);
+        WebSocketSessionHolder.addSession(session);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
             messageToSend = new TextMessage(objectMapper.writeValueAsBytes(welcomeMessage));
         }
 
-        for (WebSocketSession webSocketSession : WebSocketSessionHolder.sessions) {
+        for (WebSocketSession webSocketSession : WebSocketSessionHolder.getSessions()) {
             if (webSocketSession.isOpen()) {
                 webSocketSession.sendMessage(messageToSend);
             }
@@ -50,7 +50,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        WebSocketSessionHolder.sessions.remove(session);
+        WebSocketSessionHolder.removeSession(session);
     }
 }
 

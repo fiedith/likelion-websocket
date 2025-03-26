@@ -26,7 +26,7 @@ public class MessageService {
 
         try {
             TextMessage messageToSend = new TextMessage(objectMapper.writeValueAsBytes(chatMessage));
-            Set<WebSocketSession> sessions = WebSocketSessionHolder.sessions;
+            Set<WebSocketSession> sessions = WebSocketSessionHolder.getSessions();
             for (WebSocketSession session : sessions) {
                 if (session.isOpen()) {
                     session.sendMessage(messageToSend);
